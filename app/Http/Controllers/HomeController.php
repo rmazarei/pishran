@@ -15,7 +15,7 @@ class HomeController extends Controller
         return view('index');
     }
 
-    public function getData()
+    public function getData(Request $request)
     {
     	$response = Http::post('http://chart.pishrun.ir/api/login', [
     		'email'		=> 'a@b.com',
@@ -30,9 +30,16 @@ class HomeController extends Controller
 
     	$token = $response['token'];
     	
+    	$since 	= $request->date_from ? $request->date_from : strtotime("-1 week");
+    	$to 	= $request->date_to ? $request->date_to : time();
+    	
     	$data = Http::withHeaders([
 		    'bearer_token' => $token,
-		])->get('http://chart.pishrun.ir/api/log/read?since=1691353800&to=1691699399&device_serial=62101200');
+		])->get('http://chart.pishrun.ir/api/log/read',[
+			'since'			=> 1691353800,
+			'to'			=> 1691699399,
+			'device_serial'	=> 62101200
+		]);
     	return $data;
     }
 }
