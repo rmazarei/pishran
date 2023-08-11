@@ -21,6 +21,18 @@ class HomeController extends Controller
     		'email'		=> 'a@b.com',
     		'password'	=> 'test@test'
     	]);
-    	return $response;
+    	if(!$response['token']){
+    		return response()->json([
+    			'status'	=> 0,
+    			'message'	=> 'Error getting token'
+    		], 403);
+    	}
+
+    	$token = $response['token'];
+    	
+    	$data = Http::withHeaders([
+		    'bearer_token' => $token,
+		])->get('http://chart.pishrun.ir/api/log/read?since=1691353800&to=1691699399&device_serial=62101200');
+    	return $data;
     }
 }
